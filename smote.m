@@ -57,13 +57,33 @@
 % Updated: 2020-05-07
 %
 function [X,C,Xn,Cn] = smote(X, N, k, options)
-    arguments
-        X (:,:) % Observation Matrix
-        N (:,1) double {mustBeNonnegative} = 1 % Amount of synthesization
-        k (:,1) double {mustBePositive,mustBeInteger} = 5 % Number of nearest neighbors to consider
-        options.Class (:,1) {mustBeSameSize(options.Class,X)} % Class vector: Determines the class of each observation
-        options.SynthObs (:,1) {mustBeSameSize(options.SynthObs,X)} % Synthesization vector. Determines how many times each observation is used as a base for synthesization
-    end
+    narginchk(1, 4);
+  
+  if nargin < 2 || isempty(N)
+    N = 1;
+  end
+  
+  if nargin < 3 || isempty(k)
+    k = 5;
+  end
+  
+  if nargin < 4
+    options = struct();
+  end
+  
+  assert(N >= 0, 'N must be nonnegative');
+  assert(k > 0 && floor(k) == k, 'k must be a positive integer');
+  
+  if !isfield(options, 'Class')
+    options.Class = zeros(size(X, 1), 1);
+  end
+  
+  if !isfield(options, 'SynthObs')
+    options.SynthObs = ones(size(X, 1), 1);
+  end
+  
+  assert(isvector(options.Class) && length(options.Class) == size(X, 1), 'options.Class must have the same size as X');
+  assert(isvector(options.SynthObs) && length(options.SynthObs) == size(X, 1), 'options.SynthObs must have the same size as X');
 
     rng(6);
     
