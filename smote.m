@@ -57,7 +57,12 @@
 % Updated: 2020-05-07
 %
 function [X,C,Xn,Cn] = smote(X, N, k, options)
-    narginchk(1, 4);
+    nargin_min = 1;
+  nargin_max = 4;
+  
+  if nargin < nargin_min || nargin > nargin_max
+    error('Wrong number of input arguments');
+  end
   
   if nargin < 2 || isempty(N)
     N = 1;
